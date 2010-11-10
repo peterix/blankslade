@@ -7,52 +7,58 @@
 #include <QtOpenGL>
 #include <QGLBuffer>
 #include <QGLShaderProgram>
+#include <QGLPixelBuffer>
 #include <iostream>
 
 struct Vertex
 {
+    float texcoord[2];
     float color[3];
     float position[3];
 };
 
+#define FRS 0.0625
+#define FRX FRS/2
+
+// this is crap
 const Vertex house_vert[] =
 {
     // walls
-    { { 0.0, 0.0, 1.0 }, { -4.0, -4.0, -4.0 } },
-    { { 0.0, 1.0, 0.0 }, { -4.0, -4.0,  4.0 } },
-    { { 0.0, 1.0, 1.0 }, {  4.0, -4.0,  4.0 } },
-    { { 1.0, 0.0, 0.0 }, {  4.0, -4.0, -4.0 } },
+    { { 0.0, 0.0 }, { 0.0, 0.0, 1.0 }, { -4.0, -4.0, -4.0 } },
+    { { 0.0, FRS }, { 0.0, 1.0, 0.0 }, { -4.0, -4.0,  4.0 } },
+    { { FRS, FRS }, { 0.0, 1.0, 1.0 }, {  4.0, -4.0,  4.0 } },
+    { { FRS, 0.0 }, { 1.0, 0.0, 0.0 }, {  4.0, -4.0, -4.0 } },
 
-    { { 1.0, 0.0, 1.0 }, { -4.0,  4.0, -4.0 } },
-    { { 1.0, 1.0, 0.0 }, { -4.0,  4.0,  4.0 } },
-    { { 1.0, 1.0, 1.0 }, {  4.0,  4.0,  4.0 } },
-    { { 0.0, 0.0, 1.0 }, {  4.0,  4.0, -4.0 } },
+    { { 0.0, 0.0 }, { 1.0, 0.0, 1.0 }, { -4.0,  4.0, -4.0 } },
+    { { 0.0, FRS }, { 1.0, 1.0, 0.0 }, { -4.0,  4.0,  4.0 } },
+    { { FRS, FRS }, { 1.0, 1.0, 1.0 }, {  4.0,  4.0,  4.0 } },
+    { { FRS, 0.0 }, { 0.0, 0.0, 1.0 }, {  4.0,  4.0, -4.0 } },
 
-    { { 0.0, 1.0, 0.0 }, { -4.0, -4.0, -4.0 } },
-    { { 0.0, 1.0, 1.0 }, { -4.0, -4.0,  4.0 } },
-    { { 1.0, 0.0, 0.0 }, { -4.0,  4.0,  4.0 } },
-    { { 1.0, 0.0, 1.0 }, { -4.0,  4.0, -4.0 } },
+    { { 0.0, 0.0 }, { 0.0, 1.0, 0.0 }, { -4.0, -4.0, -4.0 } },
+    { { 0.0, FRS }, { 0.0, 1.0, 1.0 }, { -4.0, -4.0,  4.0 } },
+    { { FRS, FRS }, { 1.0, 0.0, 0.0 }, { -4.0,  4.0,  4.0 } },
+    { { FRS, 0.0 }, { 1.0, 0.0, 1.0 }, { -4.0,  4.0, -4.0 } },
 
-    { { 0.0, 1.0, 0.0 }, {  4.0, -4.0, -4.0 } },
-    { { 0.0, 1.0, 1.0 }, {  4.0, -4.0,  4.0 } },
-    { { 1.0, 0.0, 0.0 }, {  4.0,  4.0,  4.0 } },
-    { { 1.0, 0.0, 1.0 }, {  4.0,  4.0, -4.0 } },
+    { { 0.0, 0.0 }, { 0.0, 1.0, 0.0 }, {  4.0, -4.0, -4.0 } },
+    { { 0.0, FRS }, { 0.0, 1.0, 1.0 }, {  4.0, -4.0,  4.0 } },
+    { { FRS, FRS }, { 1.0, 0.0, 0.0 }, {  4.0,  4.0,  4.0 } },
+    { { FRS, 0.0 }, { 1.0, 0.0, 1.0 }, {  4.0,  4.0, -4.0 } },
     // roof
-    { { 0.0, 0.0, 1.0 }, { -4.0,  4.0, -4.0 } },
-    { { 0.0, 1.0, 1.0 }, {  4.0,  4.0, -4.0 } },
-    { { 1.0, 1.0, 1.0 }, {  0.0,  9.0,  0.0 } }, 
+    { { 0.0, 0.0 }, { 0.0, 0.0, 1.0 }, { -4.0,  4.0, -4.0 } },
+    { { FRS, 0.0 }, { 0.0, 1.0, 1.0 }, {  4.0,  4.0, -4.0 } },
+    { { FRX, FRX }, { 1.0, 1.0, 1.0 }, {  0.0,  9.0,  0.0 } }, 
 
-    { { 1.0, 0.0, 0.0 }, {  4.0,  4.0, -4.0 } },
-    { { 1.0, 1.0, 0.0 }, {  4.0,  4.0,  4.0 } },
-    { { 1.0, 1.0, 1.0 }, {  0.0,  9.0,  0.0 } },
+    { { FRS, 0.0 }, { 1.0, 0.0, 0.0 }, {  4.0,  4.0, -4.0 } },
+    { { FRS, FRS }, { 1.0, 1.0, 0.0 }, {  4.0,  4.0,  4.0 } },
+    { { FRX, FRX },  { 1.0, 1.0, 1.0 }, {  0.0,  9.0,  0.0 } },
 
-    { { 0.0, 1.0, 0.0 }, {  4.0,  4.0,  4.0 } },
-    { { 0.0, 1.0, 1.0 }, { -4.0,  4.0,  4.0 } },
-    { { 1.0, 1.0, 1.0 }, {  0.0,  9.0,  0.0 } },
+    { { FRS, FRS }, { 0.0, 1.0, 0.0 }, {  4.0,  4.0,  4.0 } },
+    { { 0.0, FRS }, { 0.0, 1.0, 1.0 }, { -4.0,  4.0,  4.0 } },
+    { { FRX, FRX },  { 1.0, 1.0, 1.0 }, {  0.0,  9.0,  0.0 } },
 
-    { { 0.0, 1.0, 0.0 }, { -4.0,  4.0,  4.0 } },
-    { { 1.0, 1.0, 0.0 }, { -4.0,  4.0, -4.0 } },
-    { { 1.0, 1.0, 1.0 }, {  0.0,  9.0,  0.0 } }
+    { { 0.0, FRS }, { 0.0, 1.0, 0.0 }, { -4.0,  4.0,  4.0 } },
+    { { 0.0, 0.0 }, { 1.0, 1.0, 0.0 }, { -4.0,  4.0, -4.0 } },
+    { { FRX, FRX },  { 1.0, 1.0, 1.0 }, {  0.0,  9.0,  0.0 } }
 };
 
 const unsigned char house_idx[] =
@@ -77,7 +83,10 @@ public:
     QGLShaderProgram prog;
     int positionAttrib;
     int colorAttrib;
+    int texcoordsAttrib;
     int mvpUniform;
+    int textureUniform;
+    int terrain;
     float pz,rx,ry;
     QPoint lastMouse;
 };
@@ -100,19 +109,25 @@ GLWidget::~GLWidget()
 
 const char * VS_src =
 "#version 130\n"
-"in vec3 position; in vec3 color; uniform mat4 mvp; out vec3 c;\n"
-"void main()\n"
-"{\n"
-    "gl_Position = mvp*vec4(position,1);\n"
-    "c = color;\n"
+"in vec3 position; in vec3 color; uniform mat4 mvp; out vec3 c;"
+"in vec2 tc_in; out vec2 coord;"
+"void main()"
+"{"
+    "gl_Position = mvp*vec4(position,1);"
+    "c = color;"
+    "coord = tc_in;"
 "}";
 
 const char * FS_src =
 "#version 130\n"
 "in vec3 c; out vec4 gl_FragColor;"
+"in vec2 coord; uniform sampler2D tex;"
 "void main()"
 "{"
-    "gl_FragColor = vec4(c,1);"
+//    "gl_FragColor = vec4(c,1);"
+//    "gl_FragColor = mix( texture(tex, coord), vec4(c,1), 0.5);"
+//    "gl_FragColor = vec4(c,1) - texture(tex, coord);"
+"gl_FragColor = vec4(c,1) * texture(tex, coord);"
 "}";
 
 //initialization of OpenGL
@@ -127,7 +142,10 @@ void GLWidget::initializeGL()
 
     d->positionAttrib = d->prog.attributeLocation("position");
     d->colorAttrib = d->prog.attributeLocation("color");
+    d->texcoordsAttrib = d->prog.attributeLocation("tc_in");
+
     d->mvpUniform = d->prog.uniformLocation("mvp");
+    d->textureUniform = d->prog.uniformLocation("tex");
 
     if(d->positionAttrib == -1 || d->colorAttrib == -1 || d->mvpUniform == -1)
         std::cout << "Bad attribs!" << std::endl;
@@ -143,6 +161,10 @@ void GLWidget::initializeGL()
     EBO.bind();
     EBO.allocate(sizeof(house_idx));
     EBO.write(0,house_idx,sizeof(house_idx));
+
+    QImage texture;
+    texture.load("terrain.png");
+    d->terrain = bindTexture(texture);
 
     glClearColor(0.0f, 0.0f, 0.0f, 0.f);
 
@@ -170,11 +192,19 @@ void GLWidget::paintGL()
     mvp.rotate(d->rx,0,1,0);
     d->prog.setUniformValue(d->mvpUniform,mvp);
 
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, d->terrain);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    d->prog.setUniformValue(d->textureUniform,0);
+
     d->prog.enableAttributeArray(d->positionAttrib);
     d->prog.enableAttributeArray(d->colorAttrib);
+    d->prog.enableAttributeArray(d->texcoordsAttrib);
 
     d->VBO->bind();
 
+    d->prog.setAttributeBuffer(d->texcoordsAttrib, GL_FLOAT, offsetof(Vertex, texcoord), 2, sizeof(Vertex));
     d->prog.setAttributeBuffer(d->positionAttrib, GL_FLOAT, offsetof(Vertex, position), 3, sizeof(Vertex));
     d->prog.setAttributeBuffer(d->colorAttrib, GL_FLOAT, offsetof(Vertex, color), 3, sizeof(Vertex));
 
