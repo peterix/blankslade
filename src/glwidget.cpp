@@ -121,14 +121,14 @@ const char * VS_src =
 const char * FS_src =
 "#version 130\n"
 "in vec3 c;"
-"out vec4 f4Color;"
+//"out vec4 gl_FragColor;"
 "in vec2 coord; uniform sampler2D tex;"
 "void main()"
 "{"
 //    "gl_FragColor = vec4(c,1);"
 //    "gl_FragColor = mix( texture(tex, coord), vec4(c,1), 0.5);"
 //    "gl_FragColor = vec4(c,1) - texture(tex, coord);"
-    "f4Color = vec4(c,1) * texture(tex, coord);"
+    "gl_FragColor = vec4(c,1) * texture(tex, coord);"
 "}";
 
 //initialization of OpenGL
